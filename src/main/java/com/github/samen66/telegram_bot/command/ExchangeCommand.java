@@ -1,30 +1,37 @@
 package com.github.samen66.telegram_bot.command;
 
 import com.github.samen66.telegram_bot.model.Currency;
-import com.github.samen66.telegram_bot.service.CurrencyService;
-import com.github.samen66.telegram_bot.service.ExchangeApiService;
-import com.github.samen66.telegram_bot.service.SendBotMessageService;
+import com.github.samen66.telegram_bot.model.TelegramUser;
+import com.github.samen66.telegram_bot.model.UserMessage;
+import com.github.samen66.telegram_bot.service.*;
 import com.pengrad.telegrambot.model.Update;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 @Component
+@Transactional
 public class ExchangeCommand implements Command {
     private final SendBotMessageService sendBotMessageService;
     private final ExchangeApiService exchangeApiService;
     private final CurrencyService currencyService;
 
+    private final TelegramUserService telegramUserService;
+    private final UserMessageService userMessageService;
+
     public final static StringBuilder START_MESSAGE = new StringBuilder("");
 
     @Autowired
-    public ExchangeCommand(SendBotMessageService sendBotMessageService, ExchangeApiService exchangeApiService, CurrencyService currencyService) {
+    public ExchangeCommand(SendBotMessageService sendBotMessageService, ExchangeApiService exchangeApiService, CurrencyService currencyService, TelegramUserService telegramUserService, UserMessageService userMessageService) {
         this.sendBotMessageService = sendBotMessageService;
         this.exchangeApiService = exchangeApiService;
         this.currencyService = currencyService;
+        this.telegramUserService = telegramUserService;
+        this.userMessageService = userMessageService;
     }
 
     @Override
@@ -33,6 +40,11 @@ public class ExchangeCommand implements Command {
         String kz = "KZT";
         StringBuilder result = new StringBuilder("");
         String message = update.message().text();
+
+        TelegramUser telegramUser = telegramUserService.getTelegramUserByChatId(update.message().chat().id().toString());
+
+        userMessageService.createNewMessage(message, telegramUser);
+
         Currency currency = currencyService.findByCode(kz);
         if (currency == null){
             exchangeApiService.exchange(new ArrayList<>(Collections.singleton(kz))).

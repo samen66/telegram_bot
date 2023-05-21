@@ -1,11 +1,20 @@
 package com.github.samen66.telegram_bot.model;
 
-import java.time.LocalDateTime;
+import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+@Entity
+@Table
 public class Currency {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column
     private String code;
+    @Column
     private Double value;
+    @Column(name = "last_updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime lastUpdatedAt;
 
     public Currency(String code, Double value, LocalDateTime lastUpdatedAt) {

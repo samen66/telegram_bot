@@ -1,6 +1,7 @@
 package com.github.samen66.telegram_bot;
 
 import com.github.samen66.telegram_bot.command.CommandContainer;
+import com.github.samen66.telegram_bot.service.CurrencyService;
 import com.github.samen66.telegram_bot.service.ExchangeApiService;
 import com.github.samen66.telegram_bot.service.SendBotMessageServiceImpl;
 import com.pengrad.telegrambot.TelegramBot;
@@ -12,6 +13,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,39 +26,47 @@ import static com.github.samen66.telegram_bot.command.CommandName.NO;
 
 @Component
 public class MyBot{
+
+    Logger logger = LoggerFactory.getLogger(MyBot.class);
     private final TelegramBot telegramBot;
     public static String COMMAND_PREFIX = "/";
     private final CommandContainer commandContainer;
 
     @Autowired
-    public MyBot(TelegramBot telegramBot, ExchangeApiService exchangeApiService) {
+    public MyBot(TelegramBot telegramBot, ExchangeApiService exchangeApiService, CurrencyService currencyService) {
         this.telegramBot = telegramBot;
-        commandContainer = new CommandContainer(new SendBotMessageServiceImpl(this), exchangeApiService);
+        commandContainer = new CommandContainer(new SendBotMessageServiceImpl(this), exchangeApiService, currencyService);
         listenUp();
     }
 
     public void listenUp(){
         telegramBot.setUpdatesListener(updates -> {
             // ... process updates
-            updates.forEach(update -> {
-                long chatId = update.message().chat().id();
-                try {
-                    onUpdateReceived(update);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+            try {
+                updates.forEach(update -> {
+                    long chatId = update.message().chat().id();
+                    try {
+                        onUpdateReceived(update);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            } catch (NullPointerException e) {
+                logger.error(e.getMessage());
+            }
             // return id of last processed update or confirm them all
             return UpdatesListener.CONFIRMED_UPDATES_ALL;
         // Create Exception Handler
         }, e -> {
             if (e.response() != null) {
                 // got bad response from telegram
-                e.response().errorCode();
-                e.response().description();
+                logger.error(e.getMessage());
+//                e.response().errorCode();
+//                e.response().description();
             } else {
                 // probably network error
-                e.printStackTrace();
+                logger.error(e.getMessage());
+//                e.printStackTrace();
             }
         });
     }

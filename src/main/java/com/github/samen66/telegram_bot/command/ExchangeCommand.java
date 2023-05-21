@@ -1,5 +1,6 @@
 package com.github.samen66.telegram_bot.command;
 
+import com.github.samen66.telegram_bot.model.Currency;
 import com.github.samen66.telegram_bot.service.ExchangeApiService;
 import com.github.samen66.telegram_bot.service.SendBotMessageService;
 import com.pengrad.telegrambot.model.Update;
@@ -30,24 +31,26 @@ public class ExchangeCommand implements Command {
         String kz = "KZT";
         StringBuilder result = new StringBuilder("");
         String message = update.message().text();
+        List<String> stringList = new ArrayList<>();
+        stringList.add(kz);
+        Currency currency = exchangeApiService.exchange(stringList).get(0);
         if (message.contains("$")) {
-            String amount = message.split("\\$")[0];
             try {
-                List<String> stringList = new ArrayList<>();
-                stringList.add(kz);
-                exchangeApiService.exchange(stringList).forEach(System.out::println);
+                Double amount = Double.valueOf(message.split("\\$")[0]);
+                result.append(currency.getValue()*amount + " tenge");
             } catch (NumberFormatException e) {
-                result.append("Error");
+                result.append("Error number contains other symbols");
             }
-            System.out.println(amount);
         }else{
-            String amount = message.split(" ")[0];
+
+            Double amount = null;
             try {
-                result.append(exchangeApiService.exchange(dollar, kz, Integer.valueOf(amount)));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                amount = Double.valueOf(message.split(" ")[0]);
+                result.append(amount/currency.getValue() + " $");
+                System.out.println(result.toString());
+            } catch (NumberFormatException e) {
+                result.append("number contains other symbols");
             }
-            System.out.println(result.toString());
         }
         sendBotMessageService.sendMessage(update.message().chat().id().toString(), result.toString());
     }

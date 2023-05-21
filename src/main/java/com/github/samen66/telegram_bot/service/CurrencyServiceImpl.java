@@ -3,9 +3,10 @@ package com.github.samen66.telegram_bot.service;
 import com.github.samen66.telegram_bot.model.Currency;
 import com.github.samen66.telegram_bot.repository.CurrencyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public class CurrencyServiceImpl implements CurrencyService {
     private final CurrencyRepository currencyRepository;
     @Autowired

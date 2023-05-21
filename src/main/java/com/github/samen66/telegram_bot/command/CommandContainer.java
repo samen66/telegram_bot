@@ -1,8 +1,6 @@
 package com.github.samen66.telegram_bot.command;
 
-import com.github.samen66.telegram_bot.service.CurrencyService;
-import com.github.samen66.telegram_bot.service.ExchangeApiService;
-import com.github.samen66.telegram_bot.service.SendBotMessageService;
+import com.github.samen66.telegram_bot.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,14 +13,15 @@ public class CommandContainer {
     private final Command unknownCommand;
 
     @Autowired
-    public CommandContainer(SendBotMessageService sendBotMessageService, ExchangeApiService exchangeApiService, CurrencyService currencyService) {
+    public CommandContainer(SendBotMessageService sendBotMessageService, ExchangeApiService exchangeApiService, CurrencyService currencyService,
+                            TelegramUserService telegramUserService, UserMessageService userMessageService) {
 
         commandMap = new HashMap<>();
-        commandMap.put(START.getCommandName(), new StartCommand(sendBotMessageService));
+        commandMap.put(START.getCommandName(), new StartCommand(sendBotMessageService, telegramUserService, userMessageService));
         commandMap.put(STOP.getCommandName(), new StopCommand(sendBotMessageService));
-        commandMap.put(HELP.getCommandName(), new HelpCommand(sendBotMessageService));
+        commandMap.put(HELP.getCommandName(), new HelpCommand(sendBotMessageService, telegramUserService, userMessageService));
         commandMap.put(NO.getCommandName(), new NoCommand(sendBotMessageService));
-        commandMap.put(EXCHANGE.getCommandName(), new ExchangeCommand(sendBotMessageService, exchangeApiService, currencyService));
+        commandMap.put(EXCHANGE.getCommandName(), new ExchangeCommand(sendBotMessageService, exchangeApiService, currencyService, telegramUserService, userMessageService));
 
         unknownCommand = new UnknownCommand(sendBotMessageService);
     }

@@ -7,6 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 @Component
 public class ExchangeCommand implements Command {
     private final SendBotMessageService sendBotMessageService;
@@ -29,8 +33,10 @@ public class ExchangeCommand implements Command {
         if (message.contains("$")) {
             String amount = message.split("\\$")[0];
             try {
-                result.append(exchangeApiService.exchange(dollar, kz, Integer.valueOf(amount)));
-            } catch (IOException | NumberFormatException e) {
+                List<String> stringList = new ArrayList<>();
+                stringList.add(kz);
+                exchangeApiService.exchange(stringList).forEach(System.out::println);
+            } catch (NumberFormatException e) {
                 result.append("Error");
             }
             System.out.println(amount);

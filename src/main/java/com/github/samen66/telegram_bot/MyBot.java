@@ -1,9 +1,7 @@
 package com.github.samen66.telegram_bot;
 
 import com.github.samen66.telegram_bot.command.CommandContainer;
-import com.github.samen66.telegram_bot.service.CurrencyService;
-import com.github.samen66.telegram_bot.service.ExchangeApiService;
-import com.github.samen66.telegram_bot.service.SendBotMessageServiceImpl;
+import com.github.samen66.telegram_bot.service.*;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
@@ -33,9 +31,12 @@ public class MyBot{
     private final CommandContainer commandContainer;
 
     @Autowired
-    public MyBot(TelegramBot telegramBot, ExchangeApiService exchangeApiService, CurrencyService currencyService) {
+    public MyBot(TelegramBot telegramBot, ExchangeApiService exchangeApiService,
+                 CurrencyService currencyService, TelegramUserService telegramUserService,
+                 UserMessageService userMessageService) {
         this.telegramBot = telegramBot;
-        commandContainer = new CommandContainer(new SendBotMessageServiceImpl(this), exchangeApiService, currencyService);
+        commandContainer = new CommandContainer(new SendBotMessageServiceImpl(this),
+                exchangeApiService, currencyService, telegramUserService, userMessageService);
         listenUp();
     }
 

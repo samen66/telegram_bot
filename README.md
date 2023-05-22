@@ -44,11 +44,3 @@ This project provides a microservice developed with Spring Boot that interacts w
 ## Usage
 
 Once the bot is up and running, you can interact with it through Telegram. Send a message in the format "$1" or "100 tenge" and the bot will respond with the converted amount using the current exchange rate.
-
-## Contributing
-
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to contribute.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.

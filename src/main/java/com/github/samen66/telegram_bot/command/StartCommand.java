@@ -19,7 +19,9 @@ public class StartCommand implements Command {
     private final TelegramUserService telegramUserService;
     private final UserMessageService userMessageService;
 
-    public final static String START_MESSAGE = "Привет. Я Bot.Я помогу вам рассчитать обменный курс.";
+    public final static String START_MESSAGE = "Привет. Я Bot.Я помогу вам рассчитать обменный курс.\n"+
+            "\n" +
+            "Этот бот может обменять доллар на тенге или тенге на доллар. Чтобы использовать отправьте {number}$ для обмена доллара на тенге и отправьте {number} тенге для обмена тенге на доллар.";
 
     @Autowired
     public StartCommand(SendBotMessageService sendBotMessageService, TelegramUserService telegramUserService, UserMessageService userMessageService) {

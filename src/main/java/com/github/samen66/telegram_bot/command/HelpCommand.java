@@ -18,12 +18,14 @@ public class HelpCommand implements Command {
     private final TelegramUserService telegramUserService;
     private final UserMessageService userMessageService;
 
-    public static final String HELP_MESSAGE = String.format("✨<b>Дотупные команды</b>✨\n\n"
+    public static final String HELP_MESSAGE = String.format("Дотупные команды\n\n"
 
-                    + "<b>Начать\\закончить работу с ботом</b>\n"
+                    + "Начать\\закончить работу с ботом\n"
                     + "%s - начать работу со мной\n"
                     + "%s - приостановить работу со мной\n\n"
-                    + "%s - получить помощь в работе со мной\n",
+                    + "%s - получить помощь в работе со мной\n"
+                    + "\n" +
+                    "Этот бот может обменять доллар на тенге или тенге на доллар. Чтобы использовать отправьте {number}$ для обмена доллара на тенге и отправьте {number} тенге для обмена тенге на доллар.",
             START.getCommandName(), STOP.getCommandName(), HELP.getCommandName());
     @Autowired
     public HelpCommand(SendBotMessageService sendBotMessageService, TelegramUserService telegramUserService, UserMessageService userMessageService) {
